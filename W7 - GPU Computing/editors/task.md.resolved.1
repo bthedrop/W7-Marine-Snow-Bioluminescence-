@@ -1,0 +1,16 @@
+# Implement Bioluminescent Marine Snow Effect
+
+- [ ] Plan the implementation
+  - [x] Review current shaders ([render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert), [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag), [update.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/update.vert))
+  - [x] Draft an `implementation_plan.md`
+  - [ ] Get user approval
+- [ ] Implement Javascript interactions
+  - [ ] Add `uLastClickTime` uniform
+  - [ ] Add "mousedown" event listener to update `uLastClickTime`
+- [ ] Update Shaders
+  - [ ] Add `uLastClickTime` uniform to [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag) / [render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert)
+  - [ ] Add logic for blue flickering based on `uTime - uLastClickTime`
+  - [ ] Implement frequency decay (start fast, slow down)
+  - [ ] Implement alpha fade out to black
+- [ ] Verification
+  - [ ] Verify the visual effect looks like bioluminescent flashing

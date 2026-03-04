@@ -1,0 +1,20 @@
+# Bioluminescent Marine Snow Walkthrough
+
+## What Was Completed
+ - Successfully added mouse interaction to the scene by setting up a `window.addEventListener("mousedown")` in [index.js](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js).
+ - Updated the `RawShaderMaterial` (`pointsMat`) to accept the `uLastClickTime` metric from JavaScript.
+ - Enabled `THREE.AdditiveBlending` on the points to give overlapping particles a naturally glowing, light-emitting, bioluminescent look. 
+ - Altered [render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert) to properly pass down Particle UV coordinates.
+ - Completely overhauled [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag) to do the following math during rendering:
+    1. Check exactly how much time has passed since the user clicked (`max(0.0, uTime - uLastClickTime)`).
+    2. Add a `vUv` random offset so every particle blinks independently instead of synchronized.
+    3. Calculate a non-linear sine wave that gets visibly slower over time (`sin(15.0 * pow(timeSinceClick, 0.8))`).
+    4. Implement an Exponential Decay Multiplier (`exp(-timeSinceClick * 0.4)`) to make particles fade over time.
+    5. Output the result multiplied by a bright neon blue vector to the screen!
+
+## How to Test
+1. Make sure your local browser tab at `http://localhost:8000` is open.
+2. Refresh the page so the browser downloads the latest [.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W3%20-%20Shader%20Pipeline/map.frag) changes.
+3. The screen will start completely black (or mostly black, if you only just opened it). 
+4. Click your mouse button anywhere on the canvas.
+5. Watch the marine snow light up rapidly in neon blue, flicker violently, slow down its flickering tempo gracefully, and then decay safely back down to pure pitch black.

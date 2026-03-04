@@ -1,0 +1,54 @@
+# Implement Bioluminescent Marine Snow Effect
+
+- [ ] Plan the implementation
+  - [x] Review current shaders ([render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert), [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag), [update.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/update.vert))
+  - [x] Draft an [implementation_plan.md](file:///Users/2b/.gemini/antigravity/brain/83a6a51a-66fa-4e35-88cd-b67ebcfd907f/implementation_plan.md)
+  - [x] Get user approval
+- [ ] Implement Javascript interactions
+  - [x] Add `uLastClickTime` uniform
+  - [x] Add "mousedown" event listener to update `uLastClickTime`
+- [x] Update Shaders
+  - [x] Add `uLastClickTime` uniform to [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag) / [render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert)
+  - [x] Add logic for blue flickering based on `uTime - uLastClickTime`
+  - [x] Implement frequency decay (start fast, slow down)
+  - [x] Implement alpha fade out to black
+- [x] Verification
+  - [x] Verify the visual effect looks like bioluminescent flashing
+
+# Updates & Enhancements
+- [x] Plan Enhancements
+  - [x] Draft [implementation_plan.md](file:///Users/2b/.gemini/antigravity/brain/83a6a51a-66fa-4e35-88cd-b67ebcfd907f/implementation_plan.md) updates
+  - [x] Get user approval
+- [x] Adjust Particle Count and Size
+  - [x] Reduce FBO `size` in [index.js](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js) to decrease particle count
+  - [x] Increase `gl_PointSize` in [render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert)
+- [x] Draw Rotated Rectangles
+  - [x] Use `gl_PointCoord` in [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag) to define an oriented rectangular boundary
+  - [x] Calculate random aspect ratios and random rotations per particle using `vUv`
+  - [x] `discard` pixels outside the rotated rectangle
+- [x] Implement Screen Flash
+  - [x] Add background pulsing logic in [index.js](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js) [tick()](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js#124-151) loop using `lastClickTime`
+- [x] Verification
+  - [x] Verify there are fewer, larger, scattered rectangle particles
+  - [x] Verify the screen flashes white on click before the blue glow starts
+
+# Depth & Interaction Constraints
+- [ ] Plan Constraints
+  - [ ] Draft [implementation_plan.md](file:///Users/2b/.gemini/antigravity/brain/83a6a51a-66fa-4e35-88cd-b67ebcfd907f/implementation_plan.md) updates
+  - [ ] Get user approval
+- [ ] Modify Click Interaction
+  - [ ] Update `mousedown` listener to ignore `Cmd+Click` (`event.metaKey`)
+- [ ] Implement Depth Counter
+  - [ ] Add an overlay `<div>` in [index.html](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/index.html) for the depth counter (bottom right)
+  - [ ] Add CSS to style the depth counter
+  - [ ] Calculate `depth` based on `camera.position.y` (or `z`) in [index.js](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js) [tick](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js#124-151) loop
+  - [ ] Update overlay text with current depth
+- [ ] Restrict Bioluminescence
+  - [ ] Add `uDepth` uniform to `pointsMat`
+  - [ ] Pass the calculated depth down into `pointsMat.uniforms.uDepth.value`
+  - [ ] Update [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag) to hide all blue particles if `uDepth` is outside 600.0 - 800.0 (e.g., using `smoothstep` to fade in/out near the edges)
+- [ ] Verification
+  - [ ] Verify Cmd+click does not trigger flash
+  - [ ] Verify depth counter updates when camera moves down
+  - [ ] Verify white screen flash always occurs on standard click
+  - [ ] Verify blue particles ONLY appear between 600-800 depth

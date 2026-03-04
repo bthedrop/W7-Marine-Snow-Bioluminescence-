@@ -1,0 +1,54 @@
+# Implement Bioluminescent Marine Snow Effect
+
+- [ ] Plan the implementation
+  - [x] Review current shaders (`render.vert`, `render.frag`, `update.vert`)
+  - [x] Draft an `implementation_plan.md`
+  - [x] Get user approval
+- [ ] Implement Javascript interactions
+  - [x] Add `uLastClickTime` uniform
+  - [x] Add "mousedown" event listener to update `uLastClickTime`
+- [x] Update Shaders
+  - [x] Add `uLastClickTime` uniform to `render.frag` / `render.vert`
+  - [x] Add logic for blue flickering based on `uTime - uLastClickTime`
+  - [x] Implement frequency decay (start fast, slow down)
+  - [x] Implement alpha fade out to black
+- [x] Verification
+  - [x] Verify the visual effect looks like bioluminescent flashing
+
+# Updates & Enhancements
+- [x] Plan Enhancements
+  - [x] Draft `implementation_plan.md` updates
+  - [x] Get user approval
+- [x] Adjust Particle Count and Size
+  - [x] Reduce FBO `size` in `index.js` to decrease particle count
+  - [x] Increase `gl_PointSize` in `render.vert`
+- [x] Draw Rotated Rectangles
+  - [x] Use `gl_PointCoord` in `render.frag` to define an oriented rectangular boundary
+  - [x] Calculate random aspect ratios and random rotations per particle using `vUv`
+  - [x] `discard` pixels outside the rotated rectangle
+- [x] Implement Screen Flash
+  - [x] Add background pulsing logic in `index.js` `tick()` loop using `lastClickTime`
+- [x] Verification
+  - [x] Verify there are fewer, larger, scattered rectangle particles
+  - [x] Verify the screen flashes white on click before the blue glow starts
+
+# Depth & Interaction Constraints
+- [ ] Plan Constraints
+  - [ ] Draft `implementation_plan.md` updates
+  - [ ] Get user approval
+- [x] Modify Click Interaction
+  - [x] Update `mousedown` listener to ignore `Cmd+Click` (`event.metaKey`)
+- [x] Implement Depth Counter
+  - [x] Add an overlay `<div>` in `index.html` for the depth counter (bottom right)
+  - [x] Add CSS to style the depth counter
+  - [x] Calculate `depth` based on `camera.position.y` (or `z`) in `index.js` `tick` loop
+  - [x] Update overlay text with current depth
+- [x] Restrict Bioluminescence
+  - [x] Add `uDepth` uniform to `pointsMat`
+  - [x] Pass the calculated depth down into `pointsMat.uniforms.uDepth.value`
+  - [x] Update `render.frag` to hide all blue particles if `uDepth` is outside 600.0 - 800.0 (e.g., using `smoothstep` to fade in/out near the edges)
+- [x] Verification
+  - [x] Verify Cmd+click does not trigger flash
+  - [x] Verify depth counter updates when camera moves down
+  - [x] Verify white screen flash always occurs on standard click
+  - [x] Verify blue particles ONLY appear between 600-800 depth

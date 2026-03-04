@@ -1,0 +1,32 @@
+# Bioluminescent Enhancements Walkthrough
+
+Here are the changes deployed to the bioluminescent effect:
+
+## 1. Odd-Shaped, Rotated Rectangles
+Instead of drawing square points, every point now has a unique shape and orientation!
+- [render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert) scales the particles up to a maximum size of 60.0 pixels so they have enough mathematical resolution.
+- [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag) utilizes a 2D Rotation Matrix (`mat2 rotate2d`) to twist the local pixel coordinate space (`gl_PointCoord`). 
+- It then calculates a random width (e.g., `0.2 - 1.0` scale) and height (e.g., `0.1 - 0.4` scale) for that specific particle and throws away any pixels that fall outside the bounds using `discard;`.
+- The net result is thousands of lightweight rotated rectangles flying around!
+
+## 2. Reduced Density
+- Lowered the offscreen simulation FBO size from `512x512` down to `64x64`. 
+- This reduces the total particle count from 262,144 down to 4,096.
+- The scene now has significantly more empty space ("negative space") between the glowing elements, making the individual shapes much easier to distinguish.
+
+## 3. Full-Screen Flash & Orbit Controls
+- Updated the main Javascript [tick()](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js#125-161) function in [index.js](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js).
+- It now mathematically polls the `timeSinceClick` delta directly on the CPU.
+- When `timeSinceClick` is less than 0.2 seconds, it lerps `scene.background` away from Pitch Black to Pure White, creating an incredibly bright, instantaneous "flash" that blows out the screen.
+- Ignored clicks using the `event.metaKey` modifier so `Cmd + Click` panning around your scene via OrbitControls doesn't blind you by accidentally triggering flashes!
+
+## 4. Depth Counter & Midnight Zone Limits
+- Embedded a 0-1000 "Depth" HUD directly over the canvas in [index.html](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/index.html).
+- Implemented logic in Javascript to map your camera's Y descent directly to `Depth`, constantly updating the HUD. 
+- Passed `uDepth` into the [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag) shader explicitly.
+- The GPU will now smoothly fade the particle `alpha` to invisible if the camera is outside the designated `600 - 800` ft range, while retaining the stark white background flash!
+
+## How to Test
+1. Make sure your local browser tab at `http://localhost:8000` is open.
+2. Refresh the page so the browser downloads the latest [.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W3%20-%20Shader%20Pipeline/map.frag) and [.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W3%20-%20Shader%20Pipeline/map.vert) changes.
+3. Click your mouse! You'll see the heavy white flash and the much larger, oddly-shaped rotated rectangular particles!

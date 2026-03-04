@@ -1,0 +1,42 @@
+# Bioluminescent Marine Snow Effect
+
+## Goal Description
+The user wants to replicate a bioluminescent flashing effect on "marine snow" particles. The initial state should be black. Upon a mouse click, a light source triggers the particles to flicker brightly in blue. The flickering starts fast (around once every 0.25 seconds or 4Hz) and gradually slows down while simultaneously fading to black over a period of time.
+
+## Proposed Changes
+
+### Javascript
+#### [MODIFY] [index.js](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js)
+- Add a variable `let lastClickTime = -999.0;` to track when a flash was triggered.
+- Attach a `mousedown` event listener to the `window` to update `lastClickTime` using `clock.getElapsedTime()`.
+- Update `pointsMat` to pass both `uTime` and `uLastClickTime` into the shaders.
+- Enable `THREE.AdditiveBlending` on `pointsMat` to make the particles glow brighter when accumulating over each other.
+- Update `pointsMat.uniforms.uTime.value` and `pointsMat.uniforms.uLastClickTime.value` in the [tick()](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js#112-125) animation loop.
+
+---
+
+### Shaders
+#### [MODIFY] [render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert)
+- Pass a `varying vec2 vUv;` from the vertex shader to the fragment shader. This is necessary because we need the particle's unique UV coordinate to generate random noise to make each particle flicker at slightly different times.
+
+#### [MODIFY] [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag)
+- Declare `uniform float uTime;` and `uniform float uLastClickTime;`.
+- Calculate the `timeSinceClick` as `max(0.0, uTime - uLastClickTime)`.
+- Use a standard GLSL `sin(dot(...))` one-liner to generate a pseudo-random value per particle based on `vUv`.
+- Calculate a flickering bright blue color:
+  - Generate a phase for the sine wave using `timeSinceClick`. To make it slow down, we will feed the sine function a non-linear term (e.g. `10.0 * pow(timeSinceClick, 0.8)`), mixed with the particle's random offset.
+  - Create a `fade` multiplier using an exponential decay (e.g., `exp(-timeSinceClick * 0.4)`).
+  - Use a base bioluminescent blue color `vec3(0.1, 0.6, 1.0)`.
+  - Output standard `gl_FragColor` scaled by the flicker sine wave and the fade out multiplier.
+
+## Verification Plan
+
+### Manual Verification
+1. I will load the page via the local Python HTTP server on `http://localhost:8000`.
+2. Ensure the canvas starts entirely pitch black.
+3. Click anywhere on the browser window.
+4. Verify visually that:
+    - The marine snow lights up neon blue immediately.
+    - Particles initially flicker very quickly (multiple times a second).
+    - The tempo of the flickering visibly slows down.
+    - All brightness linearly/exponentially scales back to total blackness over several seconds.

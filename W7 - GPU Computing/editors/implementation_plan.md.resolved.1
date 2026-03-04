@@ -1,0 +1,31 @@
+# Bioluminescent Enhancements (Rotated Rectangles & White Flash)
+
+## Goal Description
+The user wants to visually tweak the effect:
+1. Make particles odd-shaped, rotated rectangles.
+2. Decrease the total number of particles and increase their size to create more negative space.
+3. Add a harsh white full-screen flash at the very moment of a click, which transitions into the blue bioluminescence.
+
+## Proposed Changes
+
+### Javascript
+#### [MODIFY] [index.js](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js)
+- Change the offscreen render buffer size `const size = 512;` to something much smaller like `const size = 64;`. This reduces the particle count from 262,144 down to 4,096. 
+- In the [tick()](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/index.js#122-138) loop, dynamically update the `scene.background` color based on `max(0.0, time - lastClickTime)`. If elapsed time is extremely small (e.g. < 0.2 seconds), lerp the background to bright white to simulate the submarine flash lighting up the whole ocean, and decay it quickly back to `0x292f33` (or total black `0x000000`).
+
+### Shaders
+#### [MODIFY] [render.vert](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.vert)
+- Increase `gl_PointSize` significantly (e.g. from `1.0` to `40.0`). We will use a random scale derived from `uv` so some particles are larger than others. E.g. `gl_PointSize = 20.0 + random(uv) * 40.0;`. (Note: we'll add a simple PRNG to the vertex shader).
+
+#### [MODIFY] [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag)
+- We are rendering `THREE.Points`, so we get a square bounds per-particle from `0.0` to `1.0` accessible via `gl_PointCoord`.
+- Inside [render.frag](file:///Users/2b/Library/CloudStorage/GoogleDrive-brian.rio11@gmail.com/My%20Drive/%F0%9F%94%B5/01%20Grad%20School/02%20SP26/03%20It%27s%20Shader%20Time/W8%20-%20GPU%20Computing/src/shaders/render.frag), we will:
+  - Generate a random angle and slightly randomized rectangle dimensions (width/height) using the particle's `vUv`.
+  - Shift `gl_PointCoord` around its center (0.5, 0.5), apply a 2D rotation matrix by the angle, and then check if the coordinate lies inside our random width/height bounding box.
+  - If it falls out of bounds (closer to the corners of the rotated square), we use `discard;` to clip the pixel. This perfectly fakes rotated rectangles while remaining extremely lightweight on the GPU.
+  - We'll also mix the particle color with white when `timeSinceClick` is near 0 so the particles themselves blow out visually alongside the background.
+
+## Verification
+- Load `http://localhost:8000`.
+- Verify particles are fewer and visually appear as rotated rectangular dashes.
+- Click the screen and verify a blinding white flash hits the whole screen before bleeding into the bioluminescent particle effects.
