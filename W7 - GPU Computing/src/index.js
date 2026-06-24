@@ -27,7 +27,8 @@ const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
 let lastClickTime = -999.0;
-window.addEventListener("mousedown", () => {
+window.addEventListener("mousedown", (event) => {
+  if (event.metaKey || event.ctrlKey) return;
   lastClickTime = clock.getElapsedTime();
 });
 
@@ -100,7 +101,8 @@ const pointsMat = new THREE.RawShaderMaterial({
   uniforms: {
     uTexPositions: { value: bufferPosition.texture },
     uTime: { value: 0.0 },
-    uLastClickTime: { value: -999.0 }
+    uLastClickTime: { value: -999.0 },
+    uDepth: { value: 0.0 }
   },
   blending: THREE.AdditiveBlending,
   depthTest: false,
@@ -140,9 +142,14 @@ const tick = () => {
   renderer.render(updatePosScene, camera);
   renderer.setRenderTarget(null);
 
+  // Depth calculation and UI update.
+  const depth = Math.max(0, -camera.position.y * 50);
+  document.getElementById("depth-counter").innerText = `Depth: ${Math.floor(depth)} ft`;
+
   // Render points onscreen.
   pointsMat.uniforms.uTime.value = time;
   pointsMat.uniforms.uLastClickTime.value = lastClickTime;
+  pointsMat.uniforms.uDepth.value = depth;
   renderer.setRenderTarget(null);
   renderer.render(scene, camera);
 

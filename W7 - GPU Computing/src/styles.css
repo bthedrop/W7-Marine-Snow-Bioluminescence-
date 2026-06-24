@@ -15,3 +15,15 @@ body {
   left: 0;
   outline: none;
 }
+
+#depth-counter {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
+  color: #00ffcc;
+  text-shadow: 0 0 8px #00ffcc, 0 0 16px #00ffcc;
+  pointer-events: none;
+  z-index: 10;
+}

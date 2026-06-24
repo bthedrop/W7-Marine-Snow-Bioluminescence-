@@ -2,6 +2,7 @@ precision mediump float;
 
 uniform float uTime;
 uniform float uLastClickTime;
+uniform float uDepth;
 
 varying vec2 vUv;
 
@@ -70,6 +71,10 @@ void main()
     // Prevent the particles from showing at all if enough time has passed
     // (Optimization/Visual cleanup to reach pure black)
     float alpha=smoothstep(6.,4.,timeSinceClick);
-    
+
+    // Restrict bioluminescence to the 600-800 ft depth zone
+    float depthAlpha=smoothstep(550.0,600.0,uDepth)*(1.0-smoothstep(800.0,850.0,uDepth));
+    alpha*=depthAlpha;
+
     gl_FragColor=vec4(finalColor,alpha);
 }
